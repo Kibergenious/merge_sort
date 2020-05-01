@@ -1,0 +1,50 @@
+package sample;
+
+import java.util.Arrays;
+// Идея сортировки слиянием заключается в том, что массив разделяется на две примерно равные части, каждая из которых сортируется отдельно
+// Затем эти два массива сливают в один: сравнивают первые два элемента, меньший откладывается
+// Тот который оказался больше сравнивается со вторым элементом другого массива и т.д.
+// Если в одной из частей элементов больше, то остатки этого массива просто добавляются в третий
+// Они подходят и так, тк они уже были упорядоченны с предыдущими
+public class Main {
+    public static void main(String[] args) {
+        int[] array1 = { 312, 86, -957, 1, 111, 0, 3201, 840, -1, 74883299, 228 };
+        int[] result = mergesort(array1);
+        System.out.println(Arrays.toString(result));
+    }
+
+    public static int[] mergesort(int[] array1) {
+        int[] a = Arrays.copyOf(array1, array1.length);
+        int[] b = new int[array1.length];
+        int[] result = mergesortInner(a, b, 0, array1.length);
+        return result;
+    }
+    public static int[] mergesortInner(int[] a, int[] b,
+                                       int startIndex, int endIndex) {
+        if (startIndex >= endIndex - 1) {
+            return a;
+        }
+
+        // уже отсортирован
+        int middle = startIndex + (endIndex - startIndex) / 2;
+        int[] sorted1 = mergesortInner(a, b, startIndex, middle);
+        int[] sorted2 = mergesortInner(a, b, middle, endIndex);
+
+        // Слияние отсортированных массивов
+        int index1 = startIndex;
+        int index2 = middle;
+        int destIndex = startIndex;
+        int[] result = sorted1 == a ? b : a;
+        while (index1 < middle && index2 < endIndex) {
+            result[destIndex++] = sorted1[index1] < sorted2[index2]
+                    ? sorted1[index1++] : sorted2[index2++];
+        }
+        while (index1 < middle) {
+            result[destIndex++] = sorted1[index1++];
+        }
+        while (index2 < endIndex) {
+            result[destIndex++] = sorted2[index2++];
+        }
+        return result;
+    }
+}
